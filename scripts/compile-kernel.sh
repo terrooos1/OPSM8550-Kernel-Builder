@@ -160,6 +160,13 @@ if [[ "$SOURCE_LAYOUT" == "oneplus-official" ]]; then
 fi
 read -r -a ACTIVE_CONFIG_ARRAY <<< "$ACTIVE_BUILD_CONFIGS"
 
+MAKE_ARGS+=(
+    "KBUILD_BUILD_USER=root"
+    "KBUILD_BUILD_HOST=c33e3a8758b9"
+    "KBUILD_BUILD_TIMESTAMP=Thu Oct  1 02:01:54 UTC 2026"
+    "KBUILD_BUILD_VERSION=1"
+)
+
 BUILD_PHASE="config generation"
 
 apply_variant_configs arch/arm64/configs/gki_defconfig
