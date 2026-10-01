@@ -161,14 +161,16 @@ fi
 read -r -a ACTIVE_CONFIG_ARRAY <<< "$ACTIVE_BUILD_CONFIGS"
 
 BUILD_PHASE="config generation"
-apply_variant_configs arch/arm64/configs/gki_defconfig
-make "${MAKE_ARGS[@]}" gki_defconfig "${ACTIVE_CONFIG_ARRAY[@]}"
 apply_variant_configs out/.config
+./scripts/config --file out/.config --disable MODULE_SIG_PROTECT
 make "${MAKE_ARGS[@]}" olddefconfig
-
-require_config_enabled  out/.config CONFIG_MODULES
-require_config_enabled  out/.config CONFIG_MODULE_UNLOAD
-require_config_enabled  out/.config CONFIG_MODVERSIONS
+grep -q '^# CONFIG_MODULE_SIG_PROTECT is not set$' out/.config || {
+    echo "ERROR: CONFIG_MODULE_SIG_PROTECT is still enabled"
+    exit 1
+}
+require_config_enabled out/.config CONFIG_MODULES
+require_config_enabled out/.config CONFIG_MODULE_UNLOAD
+require_config_enabled out/.config CONFIG_MODVERSIONS
 
 if [[ "$KSU_TYPE" != "None" ]]; then
   require_config_enabled out/.config CONFIG_KSU
